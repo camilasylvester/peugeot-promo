@@ -651,11 +651,13 @@ body {
   function moverArquero(lado) {
     const arquero = document.getElementById('arquero');
     const img     = document.getElementById('arqueroImg');
-    arquero.style.left = lado === 'izq' ? '27%' : '73%';
+    // Primero cambia la imagen sin mover
     img.style.opacity = '0';
     setTimeout(() => {
       img.src = lado === 'izq' ? 'arqueroi.png' : 'arquerod.png';
       img.style.opacity = '1';
+      // Recién después mueve el contenedor
+      arquero.style.left = lado === 'izq' ? '27%' : '73%';
     }, 80);
   }
 

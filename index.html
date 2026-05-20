@@ -644,9 +644,9 @@
           'Content-Type': 'application/json', 'Prefer': 'return=representation'
         },
         body: JSON.stringify({
-          nombre, apellido, mail: email, patente,
+          nombre, email, patente,
           provincia: provinciaElegida, concesionario: concesionarioEleg,
-          marca: 'peugeot', resultado: 'pendiente', premio: 'pendiente'
+          resultado: 'pendiente', chances: 1
         })
       });
 

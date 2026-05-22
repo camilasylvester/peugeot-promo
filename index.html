@@ -373,6 +373,8 @@
       <div class="stepper-dot"        id="pb3"></div>
       <div class="stepper-line"       id="pl3"></div>
       <div class="stepper-dot"        id="pb4"></div>
+      <div class="stepper-line"       id="pl4" style="display:none"></div>
+      <div class="stepper-dot"        id="pb5" style="display:none"></div>
     </div>
     <div class="stepper-label" id="stepperLabel">Paso 1 de 4</div>
   </div>
@@ -445,54 +447,39 @@
     <div class="error-msg" id="err3"></div>
   </div>
 
-  <!-- ── PASO 4 ── -->
+  <!-- ── PASO 4 — LOCALIDAD (solo si hay más de una) ── -->
   <div class="step" id="step4">
-    <div class="step-titulo" id="titulo4">Tu<br/><em>concesionario</em></div>
-    <div class="step-subtitulo" id="subtitulo4">Elegí tu concesionario</div>
-    <div class="opciones-lista" id="listaConcesionario"></div>
+    <div class="step-titulo">Tu<br/><em>localidad</em></div>
+    <div class="step-subtitulo" id="subtitulo4loc">¿En qué localidad?</div>
+    <div class="opciones-lista" id="listaLocalidad"></div>
     <div class="error-msg" id="err4"></div>
   </div>
 
-  <!-- FOOTER paso 4 -->
+  <!-- ── PASO 5 — CONCESIONARIO ── -->
+  <div class="step" id="step5">
+    <div class="step-titulo">Tu<br/><em>concesionario</em></div>
+    <div class="step-subtitulo" id="subtitulo5">Elegí tu concesionario</div>
+    <div class="opciones-lista" id="listaConcesionario"></div>
+    <div class="error-msg" id="err5"></div>
+  </div>
+
+  <!-- FOOTER paso 5 -->
   <div class="footer-fixed" id="footerGuardar" style="display:none;">
     <button class="btn-siguiente" id="btnGuardar" onclick="guardarDatos()">Continuar</button>
   </div>
 
 </div>
 
+<script src="concesionarios.js"></script>
 <script>
-  const concesionarios = {
-    'Buenos Aires':        ['Peugeot Zona Norte','Peugeot La Plata','Peugeot Mar del Plata','Peugeot Quilmes','Peugeot Bahía Blanca'],
-    'CABA':                ['Peugeot Palermo','Peugeot Belgrano','Peugeot Caballito','Peugeot San Telmo'],
-    'Córdoba':             ['Peugeot Córdoba Capital','Peugeot Río Cuarto','Peugeot Villa María'],
-    'Santa Fe':            ['Peugeot Rosario','Peugeot Santa Fe Capital','Peugeot Venado Tuerto'],
-    'Mendoza':             ['Peugeot Mendoza Capital','Peugeot San Rafael','Peugeot Godoy Cruz'],
-    'Tucumán':             ['Peugeot San Miguel de Tucumán','Peugeot Yerba Buena'],
-    'Salta':               ['Peugeot Salta Capital','Peugeot Orán'],
-    'Entre Ríos':          ['Peugeot Paraná','Peugeot Concordia'],
-    'Corrientes':          ['Peugeot Corrientes Capital','Peugeot Goya'],
-    'Misiones':            ['Peugeot Posadas','Peugeot Oberá'],
-    'Chaco':               ['Peugeot Resistencia'],
-    'Formosa':             ['Peugeot Formosa Capital'],
-    'Jujuy':               ['Peugeot San Salvador de Jujuy'],
-    'Santiago del Estero': ['Peugeot Santiago Capital'],
-    'La Rioja':            ['Peugeot La Rioja Capital'],
-    'Catamarca':           ['Peugeot Catamarca Capital'],
-    'San Juan':            ['Peugeot San Juan Capital'],
-    'San Luis':            ['Peugeot San Luis Capital'],
-    'La Pampa':            ['Peugeot Santa Rosa','Peugeot General Pico'],
-    'Neuquén':             ['Peugeot Neuquén Capital','Peugeot Zapala'],
-    'Río Negro':           ['Peugeot Bariloche','Peugeot Viedma'],
-    'Chubut':              ['Peugeot Comodoro Rivadavia','Peugeot Trelew'],
-    'Santa Cruz':          ['Peugeot Río Gallegos','Peugeot Caleta Olivia'],
-    'Tierra del Fuego':    ['Peugeot Ushuaia'],
-  };
-  const provincias = Object.keys(concesionarios).sort();
+  // Provincias ordenadas desde concesionarios.js (PROVINCIAS)
+  const provincias = PROVINCIAS;
 
   const SUPABASE_URL = 'https://sjckebychgcclateitqr.supabase.co';
   const SUPABASE_KEY = 'sb_publishable_TRzNj4K8qyWZEW-sdA0MGg_4M5KqZYB';
 
-  let pasoActual = 1, provinciaElegida = null, concesionarioEleg = null;
+  let pasoActual = 1, provinciaElegida = null, localidadElegida = null, concesionarioEleg = null;
+  let totalPasos = 4; // se actualiza a 5 si hay localidad
 
   // ── NAVEGACIÓN ──────────────────────────────────
   function irAPaso(nuevo) {
@@ -543,15 +530,20 @@
   }
 
   function actualizarProgreso() {
-    for (let i = 1; i <= 4; i++) {
+    // Mostrar/ocultar dot y line del paso 5
+    document.getElementById('pb5').style.display = totalPasos === 5 ? '' : 'none';
+    document.getElementById('pl4').style.display = totalPasos === 5 ? '' : 'none';
+
+    for (let i = 1; i <= totalPasos; i++) {
       const dot  = document.getElementById(`pb${i}`);
       const line = document.getElementById(`pl${i}`);
+      if (!dot) continue;
       dot.classList.remove('done','active');
-      if (i < pasoActual)  { dot.classList.add('done');   if (line) line.classList.add('done'); }
+      if (i < pasoActual)   { dot.classList.add('done');   if (line) line.classList.add('done'); }
       if (i === pasoActual) { dot.classList.add('active'); }
       if (i >= pasoActual && line) line.classList.remove('done');
     }
-    document.getElementById('stepperLabel').textContent = `Paso ${pasoActual} de 4`;
+    document.getElementById('stepperLabel').textContent = `Paso ${pasoActual} de ${totalPasos}`;
   }
 
   // ── PASO 1 ──────────────────────────────────────
@@ -593,31 +585,77 @@
 
   function seleccionarProvincia(prov) {
     provinciaElegida = prov;
+    localidadElegida = null;
+    concesionarioEleg = null;
     document.querySelectorAll('#listaProvincia .opcion-item').forEach(b =>
       b.classList.toggle('seleccionado', b.textContent === prov)
     );
-    setTimeout(() => { renderConcesionario(prov); irAPaso(4); }, 180);
+    const localidades = Object.keys(CONCESIONARIOS[prov] || {});
+    setTimeout(() => {
+      if (localidades.length > 1) {
+        // Hay varias localidades → mostrar paso 4 (localidad) y luego paso 5
+        totalPasos = 5;
+        renderLocalidad(prov, localidades);
+        irAPaso(4);
+      } else {
+        // Solo una localidad → saltear paso 4 y ir directo a paso 5 (concesionario)
+        totalPasos = 4;
+        localidadElegida = localidades[0];
+        renderConcesionario(localidades[0]);
+        irAPaso(5);
+      }
+    }, 180);
   }
 
-  // ── PASO 4 ──────────────────────────────────────
-  function renderConcesionario(prov) {
-    const lista = document.getElementById('listaConcesionario');
-    document.getElementById('subtitulo4').textContent = `Concesionarios en ${prov}`;
+  // ── PASO 4 — LOCALIDAD ──────────────────────────
+  function renderLocalidad(prov, localidades) {
+    const lista = document.getElementById('listaLocalidad');
+    document.getElementById('subtitulo4loc').textContent = `Localidades en ${prov}`;
     lista.innerHTML = '';
-    (concesionarios[prov] || []).forEach(n => {
+    localidades.sort().forEach(loc => {
       const btn = document.createElement('button');
       btn.className = 'opcion-item';
-      btn.textContent = n;
-      btn.onclick = () => seleccionarConcesionario(n);
+      btn.textContent = loc;
+      btn.onclick = () => seleccionarLocalidad(loc);
+      lista.appendChild(btn);
+    });
+  }
+
+  function seleccionarLocalidad(loc) {
+    localidadElegida = loc;
+    document.querySelectorAll('#listaLocalidad .opcion-item').forEach(b =>
+      b.classList.toggle('seleccionado', b.textContent === loc)
+    );
+    setTimeout(() => { renderConcesionario(loc); irAPaso(5); }, 180);
+  }
+
+  // ── PASO 5 (o 4 si no hay localidad) — CONCESIONARIO ──
+  function renderConcesionario(localidad) {
+    const lista = document.getElementById('listaConcesionario');
+    const dealers = (CONCESIONARIOS[provinciaElegida] || {})[localidad] || [];
+
+    // Detectar duplicados de nombre en esta localidad
+    const conteo = {};
+    dealers.forEach(d => { conteo[d.nombre] = (conteo[d.nombre] || 0) + 1; });
+
+    document.getElementById('subtitulo5').textContent = `Concesionarios en ${localidad}`;
+    lista.innerHTML = '';
+    dealers.forEach(d => {
+      const btn = document.createElement('button');
+      btn.className = 'opcion-item';
+      // Si hay duplicados, mostrar dirección
+      const label = conteo[d.nombre] > 1 ? `${d.nombre} — ${d.direccion}` : d.nombre;
+      btn.textContent = label;
+      btn.onclick = () => seleccionarConcesionario(label, d.nombre, d.direccion);
       lista.appendChild(btn);
     });
     document.getElementById('footerGuardar').style.display = 'none';
   }
 
-  function seleccionarConcesionario(nombre) {
-    concesionarioEleg = nombre;
+  function seleccionarConcesionario(label, nombre, direccion) {
+    concesionarioEleg = nombre + (direccion ? ' — ' + direccion : '');
     document.querySelectorAll('#listaConcesionario .opcion-item').forEach(b =>
-      b.classList.toggle('seleccionado', b.textContent === nombre)
+      b.classList.toggle('seleccionado', b.textContent === label)
     );
     document.getElementById('footerGuardar').style.display = 'block';
   }
@@ -626,7 +664,7 @@
   async function guardarDatos() {
     if (!concesionarioEleg) return;
     const btn = document.getElementById('btnGuardar');
-    const err = document.getElementById('err4');
+    const err = document.getElementById('err5');
     btn.disabled = true; btn.textContent = 'Guardando...';
 
     const nombre  = document.getElementById('nombreCompleto').value.trim();
@@ -669,12 +707,14 @@
     ['nombreCompleto','email','emailConfirm','patente'].forEach(id =>
       document.getElementById(id).value = ''
     );
-    ['err1','err2','err3','err4'].forEach(id =>
-      document.getElementById(id).textContent = ''
-    );
+    ['err1','err2','err3','err4','err5'].forEach(id => {
+      const el = document.getElementById(id); if (el) el.textContent = '';
+    });
     document.getElementById('listaProvincia').innerHTML = '';
+    document.getElementById('listaLocalidad').innerHTML = '';
     document.getElementById('listaConcesionario').innerHTML = '';
-    provinciaElegida = null; concesionarioEleg = null;
+    provinciaElegida = null; localidadElegida = null; concesionarioEleg = null;
+    totalPasos = 4;
     document.getElementById('footerGuardar').style.display = 'none';
     const btn = document.getElementById('btnGuardar');
     btn.disabled = false; btn.textContent = 'Continuar';

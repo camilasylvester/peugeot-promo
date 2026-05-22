@@ -100,7 +100,7 @@ const CONCESIONARIOS = {
       { nombre: "POURTAU", direccion: "Calle 531  Nro 2540 entre 20 y 21" },
       { nombre: "GALIA", direccion: "Taller: Calle 4 Nro. 1565   -    Rtos.: Calle 64  Nº474" }
     ],
-    "Cnel. Brandsen": [
+    "Coronel Brandsen": [
       { nombre: "POURTAU", direccion: "Ruta 215 esquina Rawson" }
     ],
     "Tortuguitas": [

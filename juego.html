@@ -463,7 +463,7 @@ body {
 </head>
 <body>
 <div class="cancha">
-  <img src="cancha.png" alt="cancha" class="cancha-img"/>
+  <img src="cancha.avif" alt="cancha" class="cancha-img"/>
 
   <div class="titulo-overlay">
     <h1>Pateá<br/><span>el penal</span></h1>
@@ -471,7 +471,7 @@ body {
   </div>
 
   <div class="pelota-punto" id="pelotaPunto">
-    <img src="pelota.png" alt="pelota"/>
+    <img src="pelota.avif" alt="pelota"/>
   </div>
 
   <div class="swipe-hint"  id="swipeHint"></div>
@@ -492,11 +492,11 @@ body {
   </svg>
 
   <div class="arquero-figura" id="arquero">
-    <img id="arqueroImg" src="arquerop.png" alt="arquero"/>
+    <img id="arqueroImg" src="arquerop.avif" alt="arquero"/>
   </div>
 
   <div class="pelota-anim" id="pelotaAnim">
-    <img src="pelota.png" alt="pelota"/>
+    <img src="pelota.avif" alt="pelota"/>
   </div>
 
   <div class="cartelito" id="cartelito">
@@ -532,6 +532,17 @@ body {
       })
     });
   }
+
+  // ── Si ya jugó (recarga), mostrar resultado y congelar ──
+  window.addEventListener('DOMContentLoaded', () => {
+    if (sessionStorage.getItem('yaJugo') === '1') {
+      const resultado = sessionStorage.getItem('resultadoJuego');
+      ocultarHint();
+      document.getElementById('pelotaPunto').style.opacity = '0';
+      mostrarCartelito(resultado === 'gol');
+      juegoJugado = true;
+    }
+  });
 
   // ── JUEGO ─────────────────────────────────────────
   const destinos = {
@@ -584,7 +595,11 @@ body {
 
     juegoJugado = true;
     ocultarHint();
-    dispararPelota(`${lado}-${altura}`);
+    const sector = `${lado}-${altura}`;
+    const esGol  = Math.random() < 0.6;
+    sessionStorage.setItem('yaJugo', '1');
+    sessionStorage.setItem('resultadoJuego', esGol ? 'gol' : 'atajada');
+    dispararPelota(sector, esGol);
   }
 
   function mostrarFlecha(x1, y1, x2, y2) {
@@ -614,8 +629,7 @@ body {
   cancha.addEventListener('mousemove',  onDragMove);
   cancha.addEventListener('mouseup',    onDragEnd);
 
-  async function dispararPelota(sector) {
-    const esGol = Math.random() < 0.6;
+  async function dispararPelota(sector, esGol) {
 
     // Mover arquero
     const ladoPelota  = sector.startsWith('izq') ? 'izq' : 'der';
@@ -699,6 +713,9 @@ body {
     cartelito.style.opacity   = '0';
     cartelito.offsetHeight;
     cartelito.style.animation = 'iluminarCartel 0.6s ease-out forwards';
+
+    // Freeze everything — no more interaction possible
+    document.querySelector('.cancha').style.pointerEvents = 'none';
   }
 </script>
 </body>

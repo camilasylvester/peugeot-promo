@@ -24,7 +24,7 @@
     /* ── FONDO ─────────────────────────────────── */
     .bg {
       position: fixed; inset: 0;
-      background-image: url('cancha.png');
+      background-image: url('cancha.avif');
       background-size: auto 160%;
       background-position: center 85%;
       filter: brightness(0.78) saturate(0.75);
@@ -566,11 +566,32 @@
   }
 
   // ── PASO 2 ──────────────────────────────────────
-  function irPaso3() {
-    const pat = document.getElementById('patente').value.trim();
+  async function irPaso3() {
+    const pat = document.getElementById('patente').value.trim().toUpperCase();
     const err = document.getElementById('err2');
+    const btn = document.querySelector('#step2 .btn-siguiente');
+
     if (pat.length < 6) { err.textContent = 'Ingresá una patente válida.'; return; }
     err.textContent = '';
+
+    // Verificar si la patente ya está registrada en Supabase
+    btn.disabled = true; btn.textContent = 'Verificando...';
+    try {
+      const res = await fetch(
+        `${SUPABASE_URL}/rest/v1/registros?patente=eq.${encodeURIComponent(pat)}&select=id&limit=1`,
+        { headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY } }
+      );
+      const data = await res.json();
+      if (data && data.length > 0) {
+        err.textContent = 'Esta patente ya está registrada.';
+        btn.disabled = false; btn.textContent = 'Continuar';
+        return;
+      }
+    } catch {
+      // Si falla la consulta, dejamos pasar (no bloqueamos por error de red)
+    }
+    btn.disabled = false; btn.textContent = 'Continuar';
+
     renderProvincia();
     irAPaso(3);
   }

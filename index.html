@@ -455,7 +455,7 @@
 
   <!-- FOOTER paso 4 -->
   <div class="footer-fixed" id="footerGuardar" style="display:none;">
-    <button class="btn-siguiente" id="btnGuardar" onclick="guardarDatos()">¡A jugar!</button>
+    <button class="btn-siguiente" id="btnGuardar" onclick="guardarDatos()">Continuar</button>
   </div>
 
 </div>
@@ -677,7 +677,7 @@
     provinciaElegida = null; concesionarioEleg = null;
     document.getElementById('footerGuardar').style.display = 'none';
     const btn = document.getElementById('btnGuardar');
-    btn.disabled = false; btn.textContent = '¡A jugar!';
+    btn.disabled = false; btn.textContent = 'Continuar';
     document.querySelectorAll('.step').forEach(s => {
       s.classList.remove('active','saliendo','saliendo-der');
       s.style.transform = '';

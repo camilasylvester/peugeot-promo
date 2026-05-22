@@ -518,7 +518,9 @@
   function volver() {
     if (pasoActual <= 1) return;
     const anterior = pasoActual;
-    irAPaso(pasoActual - 1);
+    // Si saltamos localidad (totalPasos=4) y estamos en step5, volver a step3 (provincia)
+    const destino = (totalPasos === 4 && pasoActual === 5) ? 3 : pasoActual - 1;
+    irAPaso(destino);
     if (anterior === 4) {
       concesionarioEleg = null;
       document.getElementById('footerGuardar').style.display = 'none';
@@ -534,16 +536,19 @@
     document.getElementById('pb5').style.display = totalPasos === 5 ? '' : 'none';
     document.getElementById('pl4').style.display = totalPasos === 5 ? '' : 'none';
 
+    // Paso visual: cuando saltamos step4 (localidad), step5 se muestra como paso 4
+    const pasoVisual = (totalPasos === 4 && pasoActual === 5) ? 4 : pasoActual;
+
     for (let i = 1; i <= totalPasos; i++) {
       const dot  = document.getElementById(`pb${i}`);
       const line = document.getElementById(`pl${i}`);
       if (!dot) continue;
       dot.classList.remove('done','active');
-      if (i < pasoActual)   { dot.classList.add('done');   if (line) line.classList.add('done'); }
-      if (i === pasoActual) { dot.classList.add('active'); }
-      if (i >= pasoActual && line) line.classList.remove('done');
+      if (i < pasoVisual)   { dot.classList.add('done');   if (line) line.classList.add('done'); }
+      if (i === pasoVisual) { dot.classList.add('active'); }
+      if (i >= pasoVisual && line) line.classList.remove('done');
     }
-    document.getElementById('stepperLabel').textContent = `Paso ${pasoActual} de ${totalPasos}`;
+    document.getElementById('stepperLabel').textContent = `Paso ${pasoVisual} de ${totalPasos}`;
   }
 
   // ── PASO 1 ──────────────────────────────────────

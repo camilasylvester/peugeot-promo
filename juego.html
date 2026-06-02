@@ -366,6 +366,25 @@ body {
 }
 
 /* Badge "2X" que aparece en el cartelito de gol */
+.cartel-btn-inicio {
+  display: block;
+  width: 100%;
+  margin-top: 18px;
+  background: linear-gradient(160deg, rgba(255,255,255,0.96) 0%, rgba(215,215,215,0.9) 100%);
+  color: #111;
+  border: none;
+  border-radius: 10px;
+  padding: 13px 20px;
+  font-family: 'PeugeotNew', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.12s;
+}
+.cartel-btn-inicio:active { transform: scale(0.985); opacity: 0.82; }
+
 .cartel-badge {
   display: inline-block;
   margin-top: 14px;
@@ -509,6 +528,7 @@ body {
     <div class="cartel-texto" id="cartelTexto"></div>
     <div class="cartel-sub"   id="cartelSub"></div>
     <div id="cartelBadge"></div>
+    <button class="cartel-btn-inicio" onclick="window.location.href='index.html'">Volver al inicio</button>
   </div>
 </div>
 
@@ -721,6 +741,8 @@ body {
 
     // Freeze everything — no more interaction possible
     document.querySelector('.cancha').style.pointerEvents = 'none';
+    // Pero habilitar el cartelito para que el botón sea clickeable
+    cartelito.style.pointerEvents = 'all';
   }
 </script>
 </body>

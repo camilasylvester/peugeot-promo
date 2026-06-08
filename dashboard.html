@@ -483,6 +483,12 @@
     renderTabla('todos');
   }
 
+  // Auto-refresh cada 30 segundos
+  setInterval(async () => {
+    await cargarDatos();
+    filtrar(filtroActivo);
+  }, 30000);
+
   function filtrar(marca) {
     filtroActivo = marca;
     document.querySelectorAll('.filtro-btn').forEach(b => b.classList.remove('active'));

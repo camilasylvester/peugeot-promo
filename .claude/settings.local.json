@@ -2,7 +2,17 @@
   "permissions": {
     "allow": [
       "Bash(file /Users/camilasylvester/Desktop/mopar-mundial/*)",
-      "mcp__Claude_Preview__preview_start"
+      "mcp__Claude_Preview__preview_start",
+      "Bash(npm list *)",
+      "Bash(node generar_plan_costos.js)",
+      "Bash(npm root *)",
+      "Bash(vercel --version)",
+      "Bash(npm install *)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git push *)",
+      "Bash(vercel --prod)",
+      "Bash(vercel --prod --yes)"
     ]
   }
 }

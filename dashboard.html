@@ -427,23 +427,13 @@
       <!-- PROVINCIAS -->
       <div class="seccion">
         <div class="seccion-titulo">Top provincias</div>
-        ${topProvincias.map(([prov, n]) => `
-          <div class="barra-item">
-            <div class="barra-label">${prov}</div>
-            <div class="barra-track"><div class="barra-fill" style="width:${Math.round(n/maxProv*100)}%"></div></div>
-            <div class="barra-num">${n}</div>
-          </div>`).join('')}
+        <div id="barrasProvincias"></div>
       </div>
 
       <!-- CONCESIONARIAS -->
       <div class="seccion">
         <div class="seccion-titulo">Top concesionarias</div>
-        ${topConc.map(([conc, n]) => `
-          <div class="barra-item">
-            <div class="barra-label">${conc}</div>
-            <div class="barra-track"><div class="barra-fill" style="width:${Math.round(n/maxConc*100)}%"></div></div>
-            <div class="barra-num">${n}</div>
-          </div>`).join('')}
+        <div id="barrasConc"></div>
       </div>
 
       <!-- DESCARGAR CSV -->
@@ -480,7 +470,7 @@
       </div>
     `;
 
-    renderTabla('todos');
+    filtrar('todos');
   }
 
   // Auto-refresh cada 30 segundos
@@ -493,15 +483,48 @@
     filtroActivo = marca;
     document.querySelectorAll('.filtro-btn').forEach(b => b.classList.remove('active'));
     document.getElementById(`filtro-${marca}`).classList.add('active');
-    renderTabla(marca);
-  }
-
-  function renderTabla(marca) {
     const datos = marca === 'todos'
       ? todosLosRegistros
       : todosLosRegistros.filter(r => (r.marca || '').toLowerCase() === marca);
+    renderBarras(datos);
+    renderTabla(datos);
+  }
 
-    document.getElementById('tablaBody').innerHTML = datos.map(r => {
+  function renderBarras(datos) {
+    const porProvincia = {};
+    datos.forEach(r => {
+      const p = r.provincia || 'Sin provincia';
+      porProvincia[p] = (porProvincia[p] || 0) + 1;
+    });
+    const topProvincias = Object.entries(porProvincia).sort((a,b) => b[1]-a[1]).slice(0, 10);
+    const maxProv = topProvincias[0]?.[1] || 1;
+
+    const porConc = {};
+    datos.forEach(r => {
+      const c = (r.concesionario || 'Sin datos').split(' — ')[0];
+      porConc[c] = (porConc[c] || 0) + 1;
+    });
+    const topConc = Object.entries(porConc).sort((a,b) => b[1]-a[1]).slice(0, 10);
+    const maxConc = topConc[0]?.[1] || 1;
+
+    document.getElementById('barrasProvincias').innerHTML = topProvincias.map(([prov, n]) => `
+      <div class="barra-item">
+        <div class="barra-label">${prov}</div>
+        <div class="barra-track"><div class="barra-fill" style="width:${Math.round(n/maxProv*100)}%"></div></div>
+        <div class="barra-num">${n}</div>
+      </div>`).join('') || '<div style="color:rgba(255,255,255,0.2);font-size:12px;padding:10px 0">Sin datos</div>';
+
+    document.getElementById('barrasConc').innerHTML = topConc.map(([conc, n]) => `
+      <div class="barra-item">
+        <div class="barra-label">${conc}</div>
+        <div class="barra-track"><div class="barra-fill" style="width:${Math.round(n/maxConc*100)}%"></div></div>
+        <div class="barra-num">${n}</div>
+      </div>`).join('') || '<div style="color:rgba(255,255,255,0.2);font-size:12px;padding:10px 0">Sin datos</div>';
+  }
+
+  function renderTabla(datos) {
+
+    document.getElementById('tablaBody').innerHTML = (datos||[]).map(r => {
       const fecha = r.created_at ? new Date(r.created_at).toLocaleDateString('es-AR') : '—';
       const res   = r.resultado || 'pendiente';
       return `<tr>

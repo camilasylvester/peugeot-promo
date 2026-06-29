@@ -63,7 +63,8 @@ const CONCESIONARIOS = {
       { nombre: "NOVO", direccion: "Mármol 343" }
     ],
     "Ramos Mejia": [
-      { nombre: "NAVE MOTORS", direccion: "Av. Rivadavia 13430" }
+      { nombre: "NAVE MOTORS", direccion: "Av. Rivadavia 13430" },
+      { nombre: "LEMANS", direccion: "Av. Rivadavia 13430" }
     ],
     "San Martín": [
       { nombre: "LE MERIDIEN", direccion: "Av.Ricardo Balbín 2669" }

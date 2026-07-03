@@ -199,6 +199,9 @@ const CONCESIONARIOS = {
     ],
     "Santa Fé": [
       { nombre: "NATION", direccion: "Belgrano 2663/77" }
+    ],
+    "Reconquista": [
+      { nombre: "NATION", direccion: "" }
     ]
   },
   "La Pampa": {

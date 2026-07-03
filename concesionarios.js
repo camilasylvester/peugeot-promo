@@ -201,7 +201,7 @@ const CONCESIONARIOS = {
       { nombre: "NATION", direccion: "Belgrano 2663/77" }
     ],
     "Reconquista": [
-      { nombre: "NATION", direccion: "" }
+      { nombre: "NATION", direccion: "Ruta 11, La Rioja 2810" }
     ]
   },
   "La Pampa": {
